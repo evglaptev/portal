@@ -6,7 +6,7 @@ using System.Web;
 
 namespace Portal.Models
 {
-    public class ApplicationContext : IdentityDbContext<User>
+    public class ApplicationContext : IdentityDbContext<ApplicationUser>
     {
         public ApplicationContext() : base("IdentityDb") { }
 

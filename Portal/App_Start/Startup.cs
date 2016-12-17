@@ -4,9 +4,9 @@ using Microsoft.Owin.Security.Cookies;
 using Microsoft.AspNet.Identity;
 using Portal.Models;
 
-[assembly: OwinStartup(typeof(AspNetIdentityApp.Startup))]
+[assembly: OwinStartup(typeof(Portal.Startup))]
 
-namespace AspNetIdentityApp
+namespace Portal
 {
     public class Startup
     {
@@ -14,7 +14,7 @@ namespace AspNetIdentityApp
         {
             // настраиваем контекст и менеджер
             app.CreatePerOwinContext<ApplicationContext>(ApplicationContext.Create);
-            app.CreatePerOwinContext<UserManager>(UserManager.Create);
+            app.CreatePerOwinContext<ApplicationUserManager>(ApplicationUserManager.Create);
             app.UseCookieAuthentication(new CookieAuthenticationOptions
             {
                 AuthenticationType = DefaultAuthenticationTypes.ApplicationCookie,

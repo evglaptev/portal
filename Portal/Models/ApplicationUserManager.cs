@@ -5,17 +5,17 @@ using Microsoft.Owin;
 
 namespace Portal.Models
 {
-    public class UserManager : UserManager<User>
+    public class ApplicationUserManager : UserManager<ApplicationUser>
     {
-        public UserManager(IUserStore<User> store)
+        public ApplicationUserManager(IUserStore<ApplicationUser> store)
                 : base(store)
         {
         }
-        public static UserManager Create(IdentityFactoryOptions<UserManager> options,
+        public static ApplicationUserManager Create(IdentityFactoryOptions<ApplicationUserManager> options,
                                                 IOwinContext context)
         {
             ApplicationContext db = context.Get<ApplicationContext>();
-            UserManager manager = new UserManager(new UserStore<User>(db));
+            ApplicationUserManager manager = new ApplicationUserManager(new UserStore<ApplicationUser>(db));
             return manager;
         }
     }

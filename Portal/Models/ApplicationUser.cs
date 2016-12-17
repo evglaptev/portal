@@ -6,10 +6,15 @@ using System.Web;
 
 namespace Portal.Models
 {
-    public class User:IdentityUser
+    public class ApplicationUser:IdentityUser
     {
         public string Name { get; set; }
         public string LastName { get; set; }
+
+        public ApplicationUser()
+        {
+
+        }
 
 
 

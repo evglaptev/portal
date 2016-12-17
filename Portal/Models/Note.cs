@@ -7,7 +7,7 @@ namespace Portal.Models
 {
     public class Note
     {
-        User author;
+        ApplicationUser author;
         int authorId;
         string title;
         DateTime createDateTime;

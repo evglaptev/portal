@@ -8,7 +8,7 @@ namespace Portal.Models
     public class Media
     {
         int id;
-        User author;
+        ApplicationUser author;
         int authorId;
         byte[] data;
     }
