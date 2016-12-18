@@ -6,7 +6,7 @@ using System.Web;
 
 namespace Portal.Models
 {
-    public class RegisterUser
+    public class RegisterUserModel
     {
         [Required]
         public string Email { get; set; }

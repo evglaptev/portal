@@ -9,20 +9,14 @@ using Microsoft.AspNet.Identity;
 using System.Threading.Tasks;
 using System.Security.Claims;
 using Microsoft.Owin.Security;
+using System.Data.Entity;
 
 namespace Portal.Controllers
 {
+
     public class AccountController : Controller
     {
-        // GET: Account
-
-        private ApplicationUserManager UserManager
-        {
-            get
-            {
-                return HttpContext.GetOwinContext().GetUserManager<ApplicationUserManager>();
-            }
-        }
+        UserContext db = new UserContext();
         private IAuthenticationManager AuthenticationManager
         {
             get
@@ -30,34 +24,7 @@ namespace Portal.Controllers
                 return HttpContext.GetOwinContext().Authentication;
             }
         }
-        [HttpGet]
-        public ActionResult Register()
-        {
-            return View();
-        }
 
-        [HttpPost]
-        public async Task<ActionResult> Register(RegisterUser model)
-        {
-            if (ModelState.IsValid)
-            {
-                ApplicationUser user = new ApplicationUser { UserName = model.Email, Email = model.Email };
-                IdentityResult result = await UserManager.CreateAsync(user, model.Password);
-                if (result.Succeeded)
-                {
-                    return RedirectToAction("Login", "Account");
-                }
-                else
-                {
-                    foreach (string error in result.Errors)
-                    {
-                        ModelState.AddModelError("", error);
-                    }
-                }
-            }
-            return View(model);
-        }
-        [HttpGet]
         public ActionResult Login()
         {
             return View();
@@ -69,24 +36,38 @@ namespace Portal.Controllers
         {
             if (ModelState.IsValid)
             {
-                ApplicationUser user = await UserManager.FindAsync(model.Email, model.Password);
+                User user = await db.Users.Include(u => u.Role).FirstOrDefaultAsync(u => u.Email == model.Email && u.Password == model.Password);
+
                 if (user == null)
                 {
                     ModelState.AddModelError("", "Неверный логин или пароль.");
                 }
                 else
                 {
-                    ClaimsIdentity claim = await UserManager.CreateIdentityAsync(user,
-                                            DefaultAuthenticationTypes.ApplicationCookie);
+                    ClaimsIdentity claim = new ClaimsIdentity("ApplicationCookie", ClaimsIdentity.DefaultNameClaimType, ClaimsIdentity.DefaultRoleClaimType);
+                    claim.AddClaim(new Claim(ClaimTypes.NameIdentifier, user.Id.ToString(), ClaimValueTypes.String));
+                    claim.AddClaim(new Claim(ClaimsIdentity.DefaultNameClaimType, user.Email, ClaimValueTypes.String));
+                    claim.AddClaim(new Claim("http://schemas.microsoft.com/accesscontrolservice/2010/07/claims/identityprovider",
+                        "OWIN Provider", ClaimValueTypes.String));
+                    if (user.Role != null)
+                        claim.AddClaim(new Claim(ClaimsIdentity.DefaultRoleClaimType, user.Role.Name, ClaimValueTypes.String));
+
                     AuthenticationManager.SignOut();
                     AuthenticationManager.SignIn(new AuthenticationProperties
                     {
                         IsPersistent = true
                     }, claim);
-                        return RedirectToAction("Index", "Home");
+                    return RedirectToAction("Index", "Home");
                 }
             }
             return View(model);
         }
+
+        public ActionResult Logout()
+        {
+            AuthenticationManager.SignOut();
+            return RedirectToAction("Index", "Home");
+        }
     }
+
 }
