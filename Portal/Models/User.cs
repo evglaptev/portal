@@ -15,7 +15,10 @@ namespace Portal.Models
         public int RoleId { get; set; }
         public ContextUser ContextUser { get; set; }
         public int? ContextUserId { get; set; }
-
+        public User()
+        {
+            RoleId = 1;
+        }
     }
 
     public class Role

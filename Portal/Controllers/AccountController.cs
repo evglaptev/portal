@@ -25,6 +25,23 @@ namespace Portal.Controllers
             }
         }
 
+        [HttpGet]
+        public ActionResult Register()
+        {
+            return View();
+        }
+
+        [HttpPost]
+        public async Task<ActionResult> Register(RegisterUserModel userModel)
+        {
+             db.Users.Add(new User { Email = userModel.Email, Password = userModel.Password });
+
+            await db.SaveChangesAsync();
+            return RedirectToAction("Login");
+        }
+
+
+
         public ActionResult Login()
         {
             return View();
